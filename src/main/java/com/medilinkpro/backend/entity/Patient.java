@@ -24,7 +24,7 @@ import java.util.List;
 @PrimaryKeyJoinColumn(name = "id")
 @Getter
 @Setter
-@ToString(callSuper = true, exclude = {"dossierMedical", "rendezVousList"})
+@ToString(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder

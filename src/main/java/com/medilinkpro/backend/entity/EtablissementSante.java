@@ -23,7 +23,7 @@ import java.util.UUID;
 })
 @Getter
 @Setter
-@ToString(exclude = "medecins")
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

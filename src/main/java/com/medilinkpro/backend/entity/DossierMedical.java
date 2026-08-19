@@ -25,7 +25,7 @@ import java.util.UUID;
 @Table(name = "dossiers_medicaux")
 @Getter
 @Setter
-@ToString(exclude = {"patient", "consultations", "resultatsAnalyses"})
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -38,6 +38,7 @@ public class DossierMedical {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_id", nullable = false, unique = true)
+    @ToString.Exclude
     private Patient patient;
 
     @CreationTimestamp

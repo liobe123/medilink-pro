@@ -22,7 +22,7 @@ import java.util.UUID;
 @Table(name = "consultations")
 @Getter
 @Setter
-@ToString(exclude = {"dossierMedical", "medecin", "patient", "ordonnance"})
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -35,14 +35,17 @@ public class Consultation {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dossier_id", nullable = false)
+    @ToString.Exclude
     private DossierMedical dossierMedical;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "medecin_id", nullable = false)
+    @ToString.Exclude
     private Medecin medecin;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_id", nullable = false)
+    @ToString.Exclude
     private Patient patient;
 
     @NotNull(message = "La date de consultation est obligatoire")

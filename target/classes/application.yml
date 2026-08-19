@@ -5,16 +5,16 @@ spring:
   application:
     name: medilinkpro-backend
 
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+
   datasource:
     url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:medilinkpro}
     username: ${DB_USERNAME:medilinkpro_user}
-    password: ${DB_PASSWORD:medilinkpro_pass}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
     properties:
       hibernate:
         format_sql: true
@@ -28,8 +28,11 @@ spring:
 
 medilinkpro:
   jwt:
-    # Cle secrete encodee en Base64 (HS256). A changer en production via variable d'environnement.
-    secret: ${JWT_SECRET:NDgyZDcwYjQ3YTRmMzM5ZjU0MTk4ZTU0YjQ0YTQ4ODhlMzEzYjc4ZjY0YzQ4NzU5ZjA0ZTQ4ODg1ZjQ4ZTQ4}
+    # Cle secrete encodee en Base64 (HS256). Doit etre fournie via la variable
+    # d'environnement JWT_SECRET (aucune valeur par defaut : l'application refuse
+    # de demarrer sans secret explicite). Generer par ex. avec :
+    #   openssl rand -base64 64
+    secret: ${JWT_SECRET}
     expiration-ms: ${JWT_EXPIRATION_MS:86400000}
 
 springdoc:
@@ -39,8 +42,3 @@ springdoc:
     tagsSorter: alpha
   api-docs:
     path: /v3/api-docs
-
-logging:
-  level:
-    com.medilinkpro.backend: DEBUG
-    org.springframework.security: INFO

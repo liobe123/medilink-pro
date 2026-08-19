@@ -14,6 +14,9 @@ spring:
     show-sql: false
 
 medilinkpro:
+  # Secret fixe volontairement (profil de test uniquement, base H2 en memoire,
+  # aucune donnee reelle) : ne pas reutiliser ce fichier comme modele pour la prod,
+  # voir application.yml (variables JWT_SECRET / DB_PASSWORD obligatoires).
   jwt:
     secret: NDgyZDcwYjQ3YTRmMzM5ZjU0MTk4ZTU0YjQ0YTQ4ODhlMzEzYjc4ZjY0YzQ4NzU5ZjA0ZTQ4ODg1ZjQ4ZTQ4
     expiration-ms: 86400000

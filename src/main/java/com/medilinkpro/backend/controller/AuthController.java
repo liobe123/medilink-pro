@@ -23,7 +23,7 @@ public class AuthController {
 
     @PostMapping("/register")
     @SecurityRequirements
-    @Operation(summary = "Inscription d'un nouvel utilisateur", description = "Cree un compte selon le role indique et retourne un token JWT")
+    @Operation(summary = "Inscription publique d'un patient", description = "Cree toujours un compte PATIENT (le champ 'role' de la requete est ignore) et retourne un token JWT. Pour creer un compte MEDECIN, SECRETAIRE, DIRECTEUR ou ADMIN, voir POST /api/admin/users (reserve aux administrateurs).")
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(authService.register(request));
     }

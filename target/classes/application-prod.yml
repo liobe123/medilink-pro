@@ -1,0 +1,19 @@
+spring:
+  jpa:
+    hibernate:
+      # "validate" et non "update" : en production le schema est gere par des
+      # migrations controlees (ex. Flyway/Liquibase), jamais modifie automatiquement
+      # au demarrage de l'application.
+      ddl-auto: validate
+    show-sql: false
+
+medilinkpro:
+  cors:
+    # Aucune valeur par defaut : obligatoire en production. Liste les origines
+    # reelles du frontend, separees par des virgules (ex. https://app.medilinkpro.cm).
+    allowed-origins: ${CORS_ALLOWED_ORIGINS}
+
+logging:
+  level:
+    com.medilinkpro.backend: INFO
+    org.springframework.security: WARN

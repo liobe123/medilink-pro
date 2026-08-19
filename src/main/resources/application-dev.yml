@@ -1,0 +1,14 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+medilinkpro:
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:4200}
+
+logging:
+  level:
+    com.medilinkpro.backend: DEBUG
+    org.springframework.security: INFO

@@ -34,11 +34,28 @@ public class AuthService {
 
     @Transactional
     public AuthResponse register(RegisterRequest request) {
+        // Inscription publique : toujours un compte PATIENT, quel que soit le champ "role"
+        // transmis dans la requete. La creation de comptes MEDECIN/SECRETAIRE/DIRECTEUR/ADMIN
+        // passe exclusivement par registerStaff(), reserve a un administrateur authentifie.
+        return doRegister(request, Role.PATIENT);
+    }
+
+    @Transactional
+    public AuthResponse registerStaff(RegisterRequest request) {
+        if (request.getRole() == null || request.getRole() == Role.PATIENT) {
+            throw new BadRequestException(
+                    "Ce point d'acces cree des comptes du personnel (MEDECIN, SECRETAIRE, DIRECTEUR, ADMIN). "
+                            + "Utilisez /api/auth/register pour un compte PATIENT.");
+        }
+        return doRegister(request, request.getRole());
+    }
+
+    private AuthResponse doRegister(RegisterRequest request, Role role) {
         if (utilisateurRepository.existsByEmail(request.getEmail())) {
             throw new BadRequestException("Un compte existe deja avec cet email");
         }
 
-        Utilisateur utilisateur = buildUtilisateur(request);
+        Utilisateur utilisateur = buildUtilisateur(request, role);
         Utilisateur saved = utilisateurRepository.save(utilisateur);
 
         if (saved instanceof Patient patient) {
@@ -83,9 +100,8 @@ public class AuthService {
                 .build();
     }
 
-    private Utilisateur buildUtilisateur(RegisterRequest request) {
+    private Utilisateur buildUtilisateur(RegisterRequest request, Role role) {
         String encodedPassword = passwordEncoder.encode(request.getMotDePasse());
-        Role role = request.getRole();
 
         return switch (role) {
             case PATIENT -> Patient.builder()

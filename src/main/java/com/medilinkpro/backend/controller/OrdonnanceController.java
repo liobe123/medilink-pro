@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,25 +24,29 @@ public class OrdonnanceController {
     private final OrdonnanceService ordonnanceService;
 
     @GetMapping
-    @Operation(summary = "Lister toutes les ordonnances")
+    @PreAuthorize("hasAnyRole('MEDECIN', 'SECRETAIRE', 'ADMIN')")
+    @Operation(summary = "Lister toutes les ordonnances (reserve au personnel medical/administratif)")
     public ResponseEntity<List<OrdonnanceResponse>> findAll() {
         return ResponseEntity.ok(ordonnanceService.findAll());
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Recuperer une ordonnance par son id")
+    @PreAuthorize("@resourceAuth.isOwnerOfOrdonnance(#id, authentication.principal.id) or hasAnyRole('SECRETAIRE', 'ADMIN')")
+    @Operation(summary = "Recuperer une ordonnance par son id (patient/medecin concerne ou personnel autorise)")
     public ResponseEntity<OrdonnanceResponse> findById(@PathVariable UUID id) {
         return ResponseEntity.ok(ordonnanceService.findById(id));
     }
 
     @GetMapping("/patient/{patientId}")
+    @PreAuthorize("#patientId == authentication.principal.id or hasAnyRole('MEDECIN', 'SECRETAIRE', 'ADMIN')")
     @Operation(summary = "Lister les ordonnances d'un patient")
     public ResponseEntity<List<OrdonnanceResponse>> findByPatient(@PathVariable UUID patientId) {
         return ResponseEntity.ok(ordonnanceService.findByPatient(patientId));
     }
 
     @PostMapping
-    @Operation(summary = "Generer une ordonnance numerique pour une consultation")
+    @PreAuthorize("hasAnyRole('MEDECIN', 'ADMIN')")
+    @Operation(summary = "Generer une ordonnance numerique pour une consultation (reserve au medecin)")
     public ResponseEntity<OrdonnanceResponse> create(@Valid @RequestBody OrdonnanceRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(ordonnanceService.create(request));
     }

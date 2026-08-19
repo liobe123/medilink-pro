@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,18 +24,21 @@ public class DossierMedicalController {
     private final DossierMedicalService dossierMedicalService;
 
     @GetMapping
-    @Operation(summary = "Lister tous les dossiers medicaux")
+    @PreAuthorize("hasAnyRole('MEDECIN', 'SECRETAIRE', 'ADMIN')")
+    @Operation(summary = "Lister tous les dossiers medicaux (reserve au personnel medical/administratif)")
     public ResponseEntity<List<DossierMedicalResponse>> findAll() {
         return ResponseEntity.ok(dossierMedicalService.findAll());
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Recuperer un dossier medical par son id")
+    @PreAuthorize("@resourceAuth.isOwnerOfDossier(#id, authentication.principal.id) or hasAnyRole('MEDECIN', 'SECRETAIRE', 'ADMIN')")
+    @Operation(summary = "Recuperer un dossier medical par son id (proprietaire ou personnel autorise)")
     public ResponseEntity<DossierMedicalResponse> findById(@PathVariable UUID id) {
         return ResponseEntity.ok(dossierMedicalService.findById(id));
     }
 
     @GetMapping("/patient/{patientId}")
+    @PreAuthorize("#patientId == authentication.principal.id or hasAnyRole('MEDECIN', 'SECRETAIRE', 'ADMIN')")
     @Operation(summary = "Recuperer le dossier medical d'un patient (F02)")
     public ResponseEntity<DossierMedicalResponse> findByPatient(@PathVariable UUID patientId) {
         return ResponseEntity.ok(dossierMedicalService.findByPatientId(patientId));
